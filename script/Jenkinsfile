@@ -10,6 +10,12 @@ pipeline{
         
             }
         }
+        stage('upload artifact'){
+            steps{
+                sh 'curl -uadmin:APA2kr76U8fFEdHb7sLkdhUATDu -T target/bio*.jar "http://18.227.21.122:8081/artifactory/geolocation/geo/bio_${BUILD_ID}.jar"
+            }
+            
+        }
 
     }
 }

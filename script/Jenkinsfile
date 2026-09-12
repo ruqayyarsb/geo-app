@@ -1,18 +1,39 @@
-pipeline{
+pipeline {
     agent any
-    tools{
+
+    tools {
         maven 'M2_HOME'
     }
-    stages{
-        stage('clean'){
-            steps{ 
+
+    stages {
+        stage('Sonar-scan'){
+            steps{
+                sh 'mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ruqayyarsb_geo-app'
+            }
+
+        }
+        stage('clean') {
+            steps {
                 sh 'mvn clean validate compile install test package'
             }
         }
-        stage('upload artifact'){
-            steps{
-                sh 'curl -uadmin:APA2kr76U8fFEdHb7sLkdhUATDu -T target/bio*.jar "http://18.227.21.122:8081/artifactory/geolocation/geo/bio_${BUILD_ID}.jar"'
-            } 
-        } 
-    } 
+
+        stage('upload artifact') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'jfrog-credentials',
+                        usernameVariable: 'JFROG_USER',
+                        passwordVariable: 'JFROG_PASSWORD'
+                    )
+                ]) {
+                    sh '''
+                        curl --fail -u "$JFROG_USER:$JFROG_PASSWORD" \
+                        -T target/bioMedical-0.0.2-SNAPSHOT.jar \
+                        "http://18.227.21.122:8081/artifactory/geolocation/geo/bio_${BUILD_ID}.jar"
+                    '''
+                }
+            }
+        }
+    }
 }

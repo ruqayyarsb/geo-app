@@ -36,7 +36,7 @@ pipeline {
                     sh '''
                         curl --fail -u "$JFROG_USER:$JFROG_PASSWORD" \
                         -T target/bioMedical-0.0.2-SNAPSHOT.jar \
-                        "http://18.227.21.122:8081/artifactory/geolocation/geo/bio_${BUILD_ID}.jar"
+                        ""http://ec2-3-21-43-200.us-east-2.compute.amazonaws.com:8081/artifactory/geolocation/geo/bio_${BUILD_ID}.jar""
                     '''
                 }
             }
